@@ -34,6 +34,7 @@ define Package/rsync
   DEPENDS:=+libpopt +zlib +RSYNC_xattr:libattr +RSYNC_acl:libacl +RSYNC_zstd:libzstd $(ICONV_DEPENDS)
   URL:=https://rsync.samba.org/
   MENU:=1
+  DEFAULT:=y
 endef
 
 define Package/rsync/config
@@ -67,6 +68,7 @@ define Package/rsyncd
   TITLE:=Rsync daemon
   DEPENDS:=+rsync
   URL:=https://rsync.samba.org/
+  DEFAULT:=y
 endef
 
 define Package/rsync/description

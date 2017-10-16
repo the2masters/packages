@@ -80,6 +80,7 @@ endef
 define Package/zabbix-agentd
   $(call Package/zabbix/Default)
   TITLE+= agentd
+  DEFAULT:=y
 endef
 
 define Package/zabbix-extra-mac80211

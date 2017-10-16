@@ -29,8 +29,7 @@ CONFIGURE_ARGS += --enable-skill
 
 # most of these have alternatives provided by busybox applets
 PROCPS_APPLETS := \
-    free kill pgrep pkill pmap ps pwdx skill slabtop \
-    snice sysctl tload top uptime vmstat w watch
+    free ps top watch
 
 # procps-ng will be configured with "--bindir=/usr/bin --sbindir=/usr/sbin" and
 # as such executables will be installed there by default, but some of them need
@@ -60,6 +59,7 @@ endef
 define Package/procps-ng
   $(call Package/procps-ng/Default)
   MENU:=1
+  DEFAULT:=y
 endef
 
 define Package/procps-ng/description
@@ -76,6 +76,7 @@ define GenPlugin
    $(call Package/procps-ng/Default)
    DEPENDS:=procps-ng
    TITLE:=Applet $(1) from the procps-ng package
+   DEFAULT:=y
    ALTERNATIVES:=200:$(2)/$(1):/usr/libexec/$(1)-procps-ng
  endef
 

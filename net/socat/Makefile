@@ -29,6 +29,7 @@ define Package/socat
   DEPENDS:=+libpthread +librt +SOCAT_SSL:libopenssl
   TITLE:=A multipurpose relay (SOcket CAT)
   URL:=http://www.dest-unreach.org/socat/
+  DEFAULT:=y
 endef
 
 define Package/socat/description

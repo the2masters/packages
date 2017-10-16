@@ -27,6 +27,7 @@ define Package/tmux
   TITLE:=Terminal multiplexer
   DEPENDS:=+libncurses +libevent2 +libpthread +librt
   URL:=http://tmux.github.io/
+  DEFAULT:=y
 endef
 
 define Package/tmux/description

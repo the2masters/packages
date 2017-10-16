@@ -29,6 +29,7 @@ define KernelPackage/mtd-rw
 	SUBMENU:=Other modules
 	TITLE:=Write-enabler for MTD partitions
 	FILES:=$(PKG_BUILD_DIR)/mtd-rw.ko
+	DEFAULT:=y
 endef
 
 define KernelPackage/mtd-rw/description

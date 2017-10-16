@@ -32,6 +32,7 @@ define Package/nano
   TITLE:=An enhanced clone of the Pico text editor
   URL:=https://www.nano-editor.org/
   DEPENDS:=+libncurses
+  DEFAULT:=y
 endef
 
 define Package/nano/description
