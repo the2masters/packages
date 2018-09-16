@@ -160,6 +160,11 @@ post_checks()
 		/etc/init.d/nginx restart
 	fi
 
+	if [ -e /etc/init.d/lighttpd ] && [ "$update_lighttpd" -eq "1" ]; then
+		cat "$STATE_DIR/${main_domain}/fullchain.cer" "$STATE_DIR/${main_domain}/${main_domain}.key" > "$STATE_DIR/${main_domain}/${main_domain}.combined"
+		/etc/init.d/lighttpd restart
+	fi
+
 	if [ -n "$USER_CLEANUP" ] && [ -f "$USER_CLEANUP" ]; then
 		log "Running user-provided cleanup script from $USER_CLEANUP."
 		"$USER_CLEANUP" || return 1
@@ -198,6 +203,7 @@ issue_cert()
 	local use_staging
 	local update_uhttpd
 	local update_nginx
+	local update_lighttpd
 	local keylength
 	local keylength_ecc=0
 	local domains
@@ -217,6 +223,7 @@ issue_cert()
 	config_get_bool use_staging "$section" use_staging
 	config_get_bool update_uhttpd "$section" update_uhttpd
 	config_get_bool update_nginx "$section" update_nginx
+	config_get_bool update_lighttpd "$section" update_lighttpd
 	config_get calias "$section" calias
 	config_get dalias "$section" dalias
 	config_get domains "$section" domains
