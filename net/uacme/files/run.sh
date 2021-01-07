@@ -265,7 +265,8 @@ issue_cert()
 
 	if [ -f "$STATE_DIR/$main_domain/cert.pem" ]; then
 	    log "Found previous cert config, use staging=$use_staging. Issuing renew."
-	    export CHALLENGE_PATH="$webroot"
+	    export UACME_CHALLENGE_PATH="$webroot/.well-known/acme-challenge"
+	    mkdir -p "$UACME_CHALLENGE_PATH"
 	    $ACME $debug --confdir "$STATE_DIR" $staging --never-create issue $domains --hook=$HPROGRAM && ret=0 || ret=1
 	    post_checks
 	    return $ret
@@ -323,7 +324,8 @@ issue_cert()
 	fi
 	log "Using webroot dir: $webroot"
 	if [ "$APP" = "uacme" ]; then
-	    export CHALLENGE_PATH="$webroot"
+	    export UACME_CHALLENGE_PATH="$webroot/.well-known/acme-challenge"
+	    mkdir -p "$UACME_CHALLENGE_PATH"
 	else
 	    acme_args="$acme_args --webroot $webroot"
 	fi
