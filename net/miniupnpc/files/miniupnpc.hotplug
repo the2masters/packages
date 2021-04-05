@@ -1,0 +1,21 @@
+#!/bin/sh
+
+. /lib/functions/network.sh
+
+if [ "$ACTION" = ifup ] && [ "$INTERFACE" = wan ]; then
+  for tries in 5 4 3 2 1 0; do
+    network_get_ipaddr ipaddr "$INTERFACE" && break
+    if [ "$tries" = 0 ]; then
+      logger -t 90-upnpc "could not get ipaddr of interface $INTERFACE; cannot setup upnpc forwardings"
+      exit 0
+    else
+      logger -t 90-upnpc "getting ipaddr of interface $INTERFACE failed, trying again $tries times"
+      sleep 1
+    fi
+  done
+  for port in 22 80 443; do
+    logger -t 90-upnpc "Adding port forward port ${port} to address ${ipaddr}:${port}"
+    upnpc -a "$ipaddr" "$port" "$port" tcp 2>&1 | tail -n 1 | logger -t 90-upnpc
+  done
+fi
+

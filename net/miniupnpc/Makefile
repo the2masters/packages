@@ -60,6 +60,8 @@ define Package/miniupnpc/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/upnpc-shared $(1)/usr/bin/upnpc
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/upnp-listdevices-shared $(1)/usr/bin/upnp-listdevices
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
+	$(INSTALL_DATA) ./files/miniupnpc.hotplug $(1)/etc/hotplug.d/iface/90-miniupnpc
 endef
 
 define Package/libminiupnpc/install
