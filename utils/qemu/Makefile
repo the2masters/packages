@@ -25,6 +25,7 @@ PKG_BUILD_FLAGS:=no-mips16
 
 PKG_BUILD_DEPENDS+=spice-protocol
 PKG_BUILD_DEPENDS+=python3/host
+PKG_BUILD_DEPENDS+=libusbredirparser
 
 include $(INCLUDE_DIR)/nls.mk
 include $(INCLUDE_DIR)/package.mk
@@ -199,6 +200,7 @@ define qemu-target
 	+QEMU_UI_VNC_SASL:libsasl2 \
 	+QEMU_UI_SPICE:libspice-server \
 	+QEMU_DEV_USB:libusb-1.0 \
+	+QEMU_DEV_USB:libusbredirparser \
 	+QEMU_SECCOMP:libseccomp \
 	+QEMU_ZSTD:libzstd \
 	$(if $(filter %-softmmu,$(1)),+libncurses +libfdt +libslirp +libudev +pixman +qemu-firmware-efi $(ICONV_DEPENDS))
@@ -427,7 +429,7 @@ CONFIGURE_ARGS +=			\
 	--disable-strip			\
 	--disable-tcg-interpreter	\
 	--disable-tpm			\
-	--disable-usb-redir		\
+	--$(if $(CONFIG_QEMU_DEV_USB),enable,disable)-usb-redir		\
 	--disable-vde			\
 	--disable-virtfs		\
 	--disable-werror		\
