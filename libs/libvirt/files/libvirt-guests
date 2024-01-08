@@ -1,0 +1,27 @@
+#!/bin/sh /etc/rc.common
+# SPDX-License-Identifier: GPL-2.0-only
+#
+# Copyright (C) 2013-2020 OpenWrt.org
+
+START=99
+STOP=10
+
+start() {
+	return 0
+}
+
+stop() {
+	return 0
+}
+
+shutdown() {
+	for i in $(virsh list --state-paused --name); do virsh resume "$i"; done
+	for i in $(virsh list --name); do virsh shutdown "$i"; done
+	for i in $(seq 30 -1 1); do
+		local list="$(virsh list --name | xargs -r)"
+		[ -z "$list" ] && break
+		echo Wait "$i"s for "$list"
+		sleep 1
+	done
+	for i in $(virsh list --name); do virsh destroy "$i"; done
+}
