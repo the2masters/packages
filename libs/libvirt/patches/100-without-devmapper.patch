@@ -1,0 +1,43 @@
+diff --git a/meson.build b/meson.build
+index ca1b915737..ffe91dbd46 100644
+--- a/meson.build
++++ b/meson.build
+@@ -1787,11 +1787,11 @@ if conf.has('WITH_LIBVIRTD')
+     conf.set('WITH_STORAGE_DIR', 1)
+   endif
+ 
+-  if not get_option('storage_disk').disabled() and devmapper_dep.found() and libparted_dep.found()
++  if not get_option('storage_disk').disabled() and libparted_dep.found()
+     use_storage = true
+     conf.set('WITH_STORAGE_DISK', 1)
+   elif get_option('storage_disk').enabled()
+-    error('You must install libparted and libdevmapper to compile libvirt with disk storage driver')
++    error('You must install libparted to compile libvirt with disk storage driver')
+   endif
+ 
+   if not get_option('storage_fs').disabled()
+diff --git a/meson_options.txt b/meson_options.txt
+index 3dc3e8667b..d6aecb0c9b 100644
+--- a/meson_options.txt
++++ b/meson_options.txt
+@@ -117,7 +117,7 @@ option('dtrace', type: 'feature', value: 'auto', description: 'use dtrace for st
+ option('firewalld', type: 'feature', value: 'auto', description: 'firewalld support')
+ # dep:firewalld
+ option('firewalld_zone', type: 'feature', value: 'auto', description: 'whether to install firewalld libvirt zone')
+-option('firewall_backend_priority', type: 'array', choices: ['nftables', 'iptables'], value: [], description: 'order in which to try firewall backends')
++option('firewall_backend_priority', type: 'array', choices: ['nftables', 'iptables', 'none'], value: [], description: 'order in which to try firewall backends')
+ option('host_validate', type: 'feature', value: 'auto', description: 'build virt-host-validate')
+ option('init_script', type: 'combo', choices: ['systemd', 'openrc', 'check', 'none'], value: 'check', description: 'Style of init script to install')
+ option('loader_nvram', type: 'string', value: '', description: 'Pass list of pairs of <loader>:<nvram> paths. Both pairs and list items are separated by a colon.')
+diff --git a/src/storage/parthelper.c b/src/storage/parthelper.c
+index ee07ba41bb..1169ebfb64 100644
+--- a/src/storage/parthelper.c
++++ b/src/storage/parthelper.c
+@@ -31,7 +31,6 @@
+ #include <config.h>
+ 
+ #include <parted/parted.h>
+-#include <libdevmapper.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>

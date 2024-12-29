@@ -7,13 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libvirt
-PKG_VERSION:=9.4.0
+PKG_VERSION:=10.10.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://download.libvirt.org
-PKG_HASH:=4862a82f76f3e40f6046e58c8acda281bd5935d1d33eb211d198c856456fd6a5
-
+PKG_HASH:=e1bd7bd31b7c0d0ae073dec050bb5b0232b3e4adebdc58ea82fe8b366c765796
 PKG_MAINTAINER:=Stefan Hellermann <stefan@the2masters.de>
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
@@ -27,7 +26,7 @@ define Package/libvirt
   CATEGORY:=Libraries
   TITLE:=Library providing a simple virtualization API
   URL:=https://libvirt.org
-  DEPENDS:= +glib2 +libtirpc +yajl +libgnutls +libacl +libxml2 +kmod-tun
+  DEPENDS:= +glib2 +kmod-tun +libacl +libbsd +libgnutls +libjson-c +libtirpc +libxml2 +parted
 endef
 
 define Package/libvirt/description
@@ -41,13 +40,16 @@ endef
 
 MESON_ARGS += -Dauto_features=disabled \
 	-Dsystem=true \
+	-Djson_c=enabled \
 	-Ddriver_libvirtd=enabled \
-	-Ddriver_remote=enabled \
 	-Ddriver_network=enabled \
+	-Ddriver_remote=enabled \
 	-Ddriver_qemu=enabled \
 	-Dstorage_dir=enabled \
-	-Dyajl=enabled \
+	-Dstorage_disk=enabled \
+	-Dfirewall_backend_priority=none \
 	-Dqemu_user=root -Dqemu_group=root
+
 
 define Package/libvirt/install
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -55,17 +57,19 @@ define Package/libvirt/install
 
 	$(INSTALL_DIR) $(1)/usr/share/qemu/firmware
 	$(CP) files/40-edk2-x86_64-secure-enrolled.json $(1)/usr/share/qemu/firmware/
+	$(CP) files/50-edk2-aarch64-qcow2.json $(1)/usr/share/qemu/firmware/
 	$(CP) files/51-edk2-ovmf-2m-raw-x64-nosb.json $(1)/usr/share/qemu/firmware/
 
 	$(INSTALL_DIR) $(1)/usr/share/OVMF
 	$(CP) files/OVMF_{CODE,VARS}.fd $(1)/usr/share/OVMF/
 	$(CP) files/OVMF_{CODE,VARS}_4M.ms.fd $(1)/usr/share/OVMF/
 
+	$(INSTALL_DIR) $(1)/usr/share/edk2/aarch64
+	$(CP) files/QEMU_EFI-silent-pflash.qcow2 $(1)/usr/share/edk2/aarch64
+	$(CP) files/vars-template-pflash.qcow2 $(1)/usr/share/edk2/aarch64
+
 	$(INSTALL_DIR) $(1)/etc/libvirt
 	$(INSTALL_CONF) $(PKG_INSTALL_DIR)/etc/libvirt/{libvirt*,qemu{,-lockd}.conf,virt*}  $(1)/etc/libvirt/
-
-	$(INSTALL_DIR) $(1)/etc/libvirt/nwfilter
-	$(INSTALL_CONF) $(PKG_INSTALL_DIR)/etc/libvirt/nwfilter/* $(1)/etc/libvirt/nwfilter
 
 	$(INSTALL_DIR) $(1)/etc/libvirt/qemu/autostart
 	$(INSTALL_DIR) $(1)/etc/libvirt/qemu/storage/autostart
